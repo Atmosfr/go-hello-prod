@@ -57,12 +57,16 @@ func main() {
 		slog.Info("server starting", "addr", "0.0.0.0:8080")
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			slog.Error("server crashed", "err", err)
+			os.Exit(1)
 		}
 	}()
 
 	//chan for system signals
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	<-stop
+
+	slog.Info("shutting down gracefully...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
