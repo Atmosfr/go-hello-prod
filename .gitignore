@@ -8,6 +8,7 @@
 # Go
 /bin/
 /out/
+vendor/
 *.exe
 *.exe~
 *.dll
