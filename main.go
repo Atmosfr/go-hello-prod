@@ -9,6 +9,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type HelloResponse struct {
@@ -47,14 +49,46 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		slog.Warn("No .env file found, using system environment")
+	}
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	logLevel := os.Getenv("LOG_LEVEL")
+	if logLevel == "" {
+		logLevel = "info"
+	}
+
+	var level slog.Level
+	switch logLevel {
+	case "info":
+		level = slog.LevelInfo
+	case "debug":
+		level = slog.LevelDebug
+	case "warn":
+		level = slog.LevelWarn
+	case "error":
+		level = slog.LevelError
+	default:
+		level = slog.LevelInfo
+	}
+
+	slog.SetLogLoggerLevel(level)
+
+	slog.Info("configuration loaded", "port", port, "log_level", logLevel)
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/hello", HelloHandler)
 
-	srv := &http.Server{Addr: ":8080", Handler: mux}
+	srv := &http.Server{Addr: ":" + port, Handler: mux}
 
 	// separate goroutine for server
 	go func() {
-		slog.Info("server starting", "addr", "0.0.0.0:8080")
+		slog.Info("server starting", "addr", ":"+port)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			slog.Error("server crashed", "err", err)
 			os.Exit(1)
