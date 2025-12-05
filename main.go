@@ -24,21 +24,24 @@ func main() {
 		logLevel = "info"
 	}
 
-	var level slog.Level
+	var level slog.LevelVar
 	switch logLevel {
 	case "info":
-		level = slog.LevelInfo
+		level.Set(slog.LevelInfo)
 	case "debug":
-		level = slog.LevelDebug
+		level.Set(slog.LevelDebug)
 	case "warn":
-		level = slog.LevelWarn
+		level.Set(slog.LevelWarn)
 	case "error":
-		level = slog.LevelError
+		level.Set(slog.LevelError)
 	default:
-		level = slog.LevelInfo
+		level.Set(slog.LevelInfo)
 	}
 
-	slog.SetLogLoggerLevel(level)
+	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		Level: &level,
+	}))
+	slog.SetDefault(logger)
 
 	slog.Info("configuration loaded", "port", port, "log_level", logLevel)
 
