@@ -21,7 +21,6 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	hello := HelloResponse{"hello from prod-ready service", time.Now()}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(hello); err != nil {
 		slog.Debug("client disconnected during response", "error", err)
 	}
