@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"log/slog"
 	"net/http"
 	"os"
@@ -10,33 +9,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Atmosfr/go-hello-prod/internal/handlers"
 	"github.com/Atmosfr/go-hello-prod/internal/middleware"
 )
-
-type HelloResponse struct {
-	Message   string    `json:"message"`
-	Timestamp time.Time `json:"timestamp"`
-}
-
-func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	hello := HelloResponse{"hello from prod-ready service", time.Now()}
-	res, err := json.Marshal(hello)
-	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write(res); err != nil {
-		slog.Error("failed to write response", "error", err)
-	}
-}
 
 func main() {
 	port := os.Getenv("PORT")
@@ -68,7 +43,8 @@ func main() {
 	slog.Info("configuration loaded", "port", port, "log_level", logLevel)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/hello", HelloHandler)
+	mux.HandleFunc("/hello", handlers.HelloHandler)
+	mux.HandleFunc("/panic", handlers.PanicHandler)
 
 	handler := middleware.Recover(middleware.Logging(mux))
 	srv := &http.Server{Addr: ":" + port, Handler: handler}
