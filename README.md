@@ -14,7 +14,7 @@ Clean, secure, modern Go service built from scratch to full deployment.
 - Middleware: request logging + panic recovery
 - Graceful shutdown
 - Configuration via `.env`
-- Multi-stage Dockerfile → final image **~27 MB**
+- Multi-stage Dockerfile → final image **~8 MB**
 - `wolfi-base` (maximum security + Windows compatibility)
 - One-command launch with `docker compose up`
 - GitHub Actions: lint → test → build → push to GitHub Container Registry
