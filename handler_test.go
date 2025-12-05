@@ -5,19 +5,21 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/Atmosfr/go-hello-prod/internal/handlers"
 )
 
 func TestHelloHandler(t *testing.T) {
 	req := httptest.NewRequest("GET", "/hello", nil)
 	w := httptest.NewRecorder()
 
-	HelloHandler(w, req)
+	handlers.HelloHandler(w, req)
 
 	if w.Code != http.StatusOK {
 		t.Fatalf(`expected "200", got %d`, w.Code)
 	}
 
-	var resp HelloResponse
+	var resp handlers.HelloResponse
 	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
 		t.Fatal(err)
 	}
