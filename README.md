@@ -1,5 +1,5 @@
 ![CI/CD Pipeline](https://github.com/Atmosfr/go-hello-prod/actions/workflows/ci.yml/badge.svg)
-![Docker Image Size](https://ghcr-badge.egpl.dev/atmosfr/go-hello-prod/size)
+![Docker Image Size](https://ghcr-badge.egpl.dev/atmosfr/go-hello-prod/size?tag=main)
 ![Go Version](https://img.shields.io/badge/Go-1.25-blue)
 
 # Go Hello Prod — Production-Ready Service 2025
