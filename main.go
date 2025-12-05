@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Atmosfr/go-hello-prod/internal/middleware"
 	"github.com/joho/godotenv"
 )
 
@@ -19,9 +20,6 @@ type HelloResponse struct {
 }
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	start := time.Now()
-	slog.Info("incoming request", "method", r.Method, "path", r.URL.Path)
-
 	if r.Method != "GET" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -30,7 +28,6 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	hello := HelloResponse{"hello from prod-ready service", time.Now()}
 	res, err := json.Marshal(hello)
 	if err != nil {
-		slog.Error("failed to marshal response", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -40,12 +37,6 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	if _, err := w.Write(res); err != nil {
 		slog.Error("failed to write response", "error", err)
 	}
-	durationMs := float64(time.Since(start).Microseconds()) / 1000
-	slog.Info("request completed",
-		"method", r.Method,
-		"path", r.URL.Path,
-		"duration_ms", durationMs,
-	)
 }
 
 func main() {
@@ -84,7 +75,8 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/hello", HelloHandler)
 
-	srv := &http.Server{Addr: ":" + port, Handler: mux}
+	handler := middleware.Logging(mux)
+	srv := &http.Server{Addr: ":" + port, Handler: handler}
 
 	// separate goroutine for server
 	go func() {
