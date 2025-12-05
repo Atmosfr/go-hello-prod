@@ -31,10 +31,10 @@ docker compose up --build
 
 ### Endpoints
 
-| Method | Path     | Description                    |
-| ------ | -------- | ------------------------------ |
-| GET    | `/hello` | Возвращает приветствие + время |
-| GET    | `/panic` | Проверка recovery от паники    |
+| Method | Path     | Description                                            |
+| ------ | -------- | ------------------------------------------------------ |
+| GET    | `/hello` | Returns hello message + timestamp                      |
+| GET    | `/panic` | Triggers panic → tests recovery (service stays alive!) |
 
 ### Deploy
 
