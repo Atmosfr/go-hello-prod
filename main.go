@@ -75,7 +75,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/hello", HelloHandler)
 
-	handler := middleware.Logging(mux)
+	handler := middleware.Recover(middleware.Logging(mux))
 	srv := &http.Server{Addr: ":" + port, Handler: handler}
 
 	// separate goroutine for server
