@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/Atmosfr/go-hello-prod/internal/middleware"
-	"github.com/joho/godotenv"
 )
 
 type HelloResponse struct {
@@ -40,10 +39,6 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		slog.Warn("No .env file found, using system environment")
-	}
-
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
